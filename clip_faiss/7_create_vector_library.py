@@ -47,21 +47,37 @@ if __name__ == '__main__':
     # clip_model的模型路径
     clip_model_path = os.path.join(base_path, "model", "clip_model")
 
-    # # 用于生成图片特征的原始图像数据库，数据库文件组织路径为文件夹是类别名称，文件是图片
+    # 35类用于生成图片特征的原始图像数据库，数据库文件组织路径为文件夹是类别名称，文件是图片
     image_path = os.path.join(base_path, 'data', '新零售图片数据_Trax_部分')
-    # 生成图片faiss索引文件的路径
-    # 输出路径，类别名称从文件夹路径中获取，35类
-    out_path=os.path.join(base_path, 'output','faiss_model','35_category_name')
-    # 输出路径，类别名称是文件路径，35类
-    # out_path=os.path.join(base_path, 'output','faiss_model','35_image_path')
+    id_type = 'image_path'
+    '''
+    生成图片faiss索引文件的路径
+        category_name:类别名称从文件夹路径中获取
+        image_path:类别名称是图片路径
+    '''
 
-    # 用于生成图片特征的原始图像数据库，数据库文件组织路径为文件夹是类别名称，文件是图片
+    if id_type == 'category_name':
+        out_path = os.path.join(base_path, 'output', 'faiss_model', '35_category_name')
+    elif id_type == 'image_path':
+        out_path=os.path.join(base_path, 'output','faiss_model','35_image_path')
+
+    # 5037类用于生成图片特征的原始图像数据库，数据库文件组织路径为文件夹是类别名称，文件是图片
     # image_path = os.path.join(base_path, 'data', 'Trax_bbox出来的小图含label_20230207')
+    # id_type = 'category_name'
     # # 生成图片faiss索引文件的路径
-    # # 输出路径，类别名称从文件夹路径中获取，5037类
-    # out_path=os.path.join(base_path, 'output','faiss_model','5037_category_name')
-    # # 输出路径，类别名称是文件路径，5037类
-    # out_path=os.path.join(base_path, 'output','faiss_model','5037_image_path')
+    # # category_name:类别名称从文件夹路径中获取
+    # # image_path:类别名称是图片路径
+    # '''
+    #  生成图片faiss索引文件的路径
+    #      category_name:类别名称从文件夹路径中获取
+    #      image_path:类别名称是图片路径
+    # '''
+    # if id_type == 'category_name':
+    #     out_path = os.path.join(base_path, 'output', 'faiss_model', '5037_category_name')
+    # elif id_type == 'image_path':
+    #     out_path=os.path.join(base_path, 'output','faiss_model','5037_image_path')
+
+
 
     if not os.path.exists(out_path):
         os.makedirs(out_path)
@@ -82,8 +98,11 @@ if __name__ == '__main__':
                 file_path = os.path.join(root, file)
                 file_paths.append(file_path)
 
-    # id2filename = {idx: extract_directory_name(x,-2) for idx, x in enumerate(file_paths)}
-    id2filename = {idx: x for idx, x in enumerate(file_paths)}
+    if id_type == 'category_name':
+        id2filename = {idx: extract_directory_name(x,-2) for idx, x in enumerate(file_paths)}
+    elif id_type == 'image_path':
+        id2filename = {idx: x for idx, x in enumerate(file_paths)}
+
     # 保存为 JSON 文件
     with open(out_category_name, 'w') as json_file:
         json.dump(id2filename, json_file)

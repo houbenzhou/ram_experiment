@@ -1,7 +1,31 @@
 import os
-from PIL import Image
+from pathlib import Path
 
 from PIL import Image
+
+
+
+def extract_directory_name(path, level):
+    """
+    Extracts a directory name from a given path at the specified level.
+
+    :param path: The file path from which to extract the directory.
+    :param level: The level of the directory to extract, where 0 is the top-level.
+    :return: The name of the directory at the specified level or None if level is out of range.
+    """
+    try:
+        # 将字符串路径转换为Path对象
+        p = Path(path)
+        # 通过parts属性获取所有部分的元组，筛选出目录部分
+        # 忽略最后一部分如果它是文件名
+        directories=p.parts
+        # directories = [part for part in p.parts if Path(part).is_dir()]
+        # 返回指定层级的目录名
+        return directories[level]
+    except IndexError:
+        # 如果指定的层级不存在，返回None
+        return None
+
 
 def merge_two_images(image_path1, image_path2, direction='horizontal'):
     """
@@ -41,13 +65,15 @@ def read_and_parse_file(file_path):
     读取文本文件并解析每一行。
     :param file_path: 文本文件的路径
     """
+    line_array=[]
     try:
         with open(file_path, 'r', encoding='utf-8') as file:
             line_number = 1
             for line in file:
                 # 去除行首行尾的空白字符
                 cleaned_line = line.strip()
-                line_array=cleaned_line.split(" ")
+                line_temp=cleaned_line.split(" ")
+                line_array.append(line_temp)
                 # 进行一些处理，例如打印行号和内容
                 print(f"Line {line_number}: {cleaned_line}")
 
@@ -59,17 +85,29 @@ def read_and_parse_file(file_path):
     except Exception as e:
         print(f"An error occurred: {e}")
 
+    return line_array
+
 
 if __name__ == "__main__":
 
-    base_images=os.getcwd()
-    img_path = os.path.join(base_images,"data","新零售图片数据_Trax_部分")
-    file_name = os.path.join(base_images,"output","新零售图片数据_Trax_部分.txt")
-
+    base_path=os.getcwd()
+    faiss_path = os.path.join(base_path, "output", "faiss_model", "35_image_path")
+    error_picture_name_logs = os.path.join(faiss_path,"error_picture_name.txt")
+    out_error_picture_path=os.path.join(faiss_path,"error_picture")
+    if not os.path.exists(out_error_picture_path):
+        os.makedirs(out_error_picture_path)
     # 使用示例
-    # 替换下面路径为你的文本文件路径
-    read_and_parse_file(file_name)
+    line_array=read_and_parse_file(error_picture_name_logs)
 
     # 替换下面路径为你的图片路径
-    merged_image = merge_two_images('path/to/first/image.jpg', 'path/to/second/image.jpg', 'horizontal')
-    merged_image.show()  # 显示图
+    for i in line_array:
+        image_path1=i[1]
+        image_path2=i[3]
+        merged_image = merge_two_images(image_path1, image_path2, 'horizontal')
+
+        true_name = extract_directory_name(image_path1, -2)
+        pre_name = extract_directory_name(image_path2, -2)
+        # 保存图片
+        merged_image.save(os.path.join(out_error_picture_path,f"{true_name}_{pre_name}.jpg"))
+        # merged_image.save("./sdjhkf.jpg")
+        # merged_image.show()  # 显示图
