@@ -3,7 +3,18 @@ from pathlib import Path
 
 from PIL import Image
 
+import random
+import string
 
+def generate_random_string(length):
+    # 字符串可能包含的字符集
+    characters = string.ascii_letters + string.digits
+    # 随机选择指定数量的字符
+    random_string = ''.join(random.choice(characters) for i in range(length))
+    return random_string
+
+# 生成一个长度为10的随机字符串
+print(generate_random_string(10))
 
 def extract_directory_name(path, level):
     """
@@ -91,6 +102,7 @@ def read_and_parse_file(file_path):
 if __name__ == "__main__":
 
     base_path=os.getcwd()
+    # faiss_path = os.path.join(base_path, "output", "faiss_model", "5037_image_path")
     faiss_path = os.path.join(base_path, "output", "faiss_model", "35_image_path")
     error_picture_name_logs = os.path.join(faiss_path,"error_picture_name.txt")
     out_error_picture_path=os.path.join(faiss_path,"error_picture")
@@ -107,7 +119,9 @@ if __name__ == "__main__":
 
         true_name = extract_directory_name(image_path1, -2)
         pre_name = extract_directory_name(image_path2, -2)
+        # 生成一个随机的字符串
+        random_str=generate_random_string(5)
         # 保存图片
-        merged_image.save(os.path.join(out_error_picture_path,f"{true_name}_{pre_name}.jpg"))
+        merged_image.save(os.path.join(out_error_picture_path,f"{true_name}_{pre_name}_{random_str}.jpg"))
         # merged_image.save("./sdjhkf.jpg")
         # merged_image.show()  # 显示图
