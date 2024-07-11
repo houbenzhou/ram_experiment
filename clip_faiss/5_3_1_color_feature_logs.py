@@ -1,23 +1,14 @@
+import json
 import os
-
+import time
+from pathlib import Path
 import cv2
 import faiss
+import torch
 import numpy as np
 from PIL import Image
-import os
+from transformers import CLIPProcessor, CLIPModel
 
-import torch
-from PIL import Image
-from transformers import CLIPProcessor, CLIPModel, CLIPFeatureExtractor
-import json
-import faiss
-from tqdm import tqdm
-from pathlib import Path
-
-# 将图像缩放至同一尺寸
-# def resize(image_path, image_size=(256, 256)):
-#     img = Image.open(image_path)
-#     pass
 def resize(image_path, image_size=(256, 256)):
     img = cv2.imread(image_path)
     img = cv2.resize(img, image_size)
@@ -107,59 +98,61 @@ def extract_directory_name(path, level):
     except IndexError:
         # 如果指定的层级不存在，返回None
         return None
+def image_search(image, k=1):
+    image_features = get_image_color_features(image)
+    D, I = index.search(image_features, k)  # 实际的查询
 
-# 示例：使用颜色直方图创建FAISS索引
+    filenames = [[id2filename[str(j)] for j in i] for i in I]
+
+    return img_path, D, filenames
+def get_image_path(directory):
+    # 存储找到的图片路径
+    image_paths = []
+
+    # os.walk遍历目录和子目录
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            # 检查文件是否是图片，这里以几种常见图片格式为例
+            if file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif')):
+                image_paths.append(os.path.join(root, file))
+
+    # 从列表中随机选择一个图片路径
+    return image_paths
+
 if __name__ == "__main__":
     base_path = os.getcwd()
-    # 5000数据清洗过且裁切10%的类用于生成图片特征的原始图像数据库，数据库文件组织路径为文件夹是类别名称，文件是图片
-    image_path = os.path.join(base_path, 'data', 'clean_data_5037')
-    id_type = 'image_path'
+    faiss_path = os.path.join(base_path,"output","faiss_model","color_feature","35_category")
+    img_path = os.path.join(base_path, "data", "新零售图片数据_Trax_部分")
 
-    '''
-    生成图片faiss索引文件的路径
-        category_name:类别名称从文件夹路径中获取
-        image_path:类别名称是图片路径
-    '''
+    # 加载faiss索引
+    with open(os.path.join(faiss_path,"category_name.json"), 'r') as json_file:
+        id2filename = json.load(json_file)
+    index = faiss.read_index(os.path.join(faiss_path,"image_faiss.index"))
 
-    if id_type == 'category_name':
-        out_path = os.path.join(base_path, 'output', 'faiss_model', 'color_feature','clean_data_5037')
-    elif id_type == 'image_path':
-        out_path = os.path.join(base_path, 'output', 'faiss_model', 'color_feature','clean_data_5037')
+    img_paths=get_image_path(img_path)
+    out_error_picture_name_logs = os.path.join(faiss_path,"error_picture_name.txt")
+    out_correct_picture_name_logs = os.path.join(faiss_path,"correct_picture_name.txt")
+    out_correct_rate_logs = os.path.join(faiss_path,"correct_rate.txt")
 
+    # 打印查询结果
+    correct_count = 0
+    total_count = 0
+    with open(out_error_picture_name_logs, 'w',encoding='utf-8') as error_file,open(out_correct_picture_name_logs, 'w',encoding='utf-8') as correct_file:
+        for img_path in img_paths:
 
-    if not os.path.exists(out_path):
-        os.makedirs(out_path)
-    out_category_name = os.path.join(out_path, 'category_name.json')
-    out_image_faiss=os.path.join(out_path, 'image_faiss.index')
+            start_time = time.time()
+            img_path, D, filenames = image_search(img_path, k=4)
+            true_name = extract_directory_name(filenames[0][0],-2)
+            pre_name = extract_directory_name(filenames[0][1],-2)
+            total_count=total_count+1
+            for i in range(len(filenames)):
+                if true_name == pre_name:
+                    correct_count = correct_count + 1
+                    correct_file.write(f"img_path: {img_path} pred_name: {filenames[0][1]}" + "\n")
+                else:
+                    error_file.write( f"img_path: {img_path} pred_name: {filenames[0][1]}"+"\n")
+    with open(out_correct_rate_logs, 'w', encoding='utf-8') as correct_rate:
+        correct_rate.write(f"correct_count:{correct_count}, total_count: {total_count} ,accuracy: {correct_count/total_count}."+"\n")
 
-    d = 768
-    index = faiss.IndexFlatL2(d)  # 使用 L2 距离
-    # 遍历文件夹
-    file_paths = []
-    for root, dirs, files in os.walk(image_path):
-        for file in files:
-            # 检查文件是否为图片文件(这里简单地检查文件扩展名)
-            if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
-                file_path = os.path.join(root, file)
-                file_paths.append(file_path)
-
-    if id_type == 'category_name':
-        id2filename = {idx: extract_directory_name(x,-2) for idx, x in enumerate(file_paths)}
-    elif id_type == 'image_path':
-        id2filename = {idx: x for idx, x in enumerate(file_paths)}
-
-    # 保存为 JSON 文件
-    with open(out_category_name, 'w') as json_file:
-        json.dump(id2filename, json_file)
-
-    for file_path in tqdm(file_paths, total=len(file_paths)):
-        # 使用PIL打开图片
-        # image = Image.open(file_path)
-        image_features = get_image_color_features(file_path)
-
-        index.add(image_features)
-
-
-    faiss.write_index(index, out_image_faiss)
 
 

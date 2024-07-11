@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
     base_path=os.getcwd()
     # faiss_path = os.path.join(base_path, "output", "faiss_model", "5037_image_path")
-    faiss_path = os.path.join(base_path, "output", "faiss_model", "35_image_path")
+    faiss_path = os.path.join(base_path, "output", "faiss_model", "color_feature","35_category")
 
     error_picture_name_logs = os.path.join(faiss_path,"error_picture_name.txt")
     correct_picture_name_logs = os.path.join(faiss_path, "correct_picture_name.txt")
