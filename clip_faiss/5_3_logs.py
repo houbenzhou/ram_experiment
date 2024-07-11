@@ -75,8 +75,6 @@ if __name__ == "__main__":
     clip_model_path = os.path.join(base_path, "model","clip_model")
     faiss_path = os.path.join(base_path,"output","faiss_model","35_image_path")
     img_path = os.path.join(base_path, "data", "新零售图片数据_Trax_部分")
-    # faiss_path = os.path.join(base_path, "output", "faiss_model", "5037_image_path")
-    # img_path = os.path.join(base_path, "data", "Trax_bbox出来的小图含label_20230207")
 
     # 加载clip模型
     clip_model = CLIPModel.from_pretrained(clip_model_path)
@@ -87,12 +85,14 @@ if __name__ == "__main__":
     index = faiss.read_index(os.path.join(faiss_path,"image_faiss.index"))
 
     img_paths=get_image_path(img_path)
-    out_error_picture_name_logs = os.path.join(faiss_path,"correct_picture_name.txt")
-    # out_correct_rate_logs = os.path.join(faiss_path,"correct_rate.txt")
+    out_error_picture_name_logs = os.path.join(faiss_path,"error_picture_name.txt")
+    out_correct_picture_name_logs = os.path.join(faiss_path,"correct_picture_name.txt")
+    out_correct_rate_logs = os.path.join(faiss_path,"correct_rate.txt")
+
     # 打印查询结果
     correct_count = 0
     total_count = 0
-    with open(out_error_picture_name_logs, 'w',encoding='utf-8') as f:
+    with open(out_error_picture_name_logs, 'w',encoding='utf-8') as error_file,open(out_correct_picture_name_logs, 'w',encoding='utf-8') as correct_file:
         for img_path in img_paths:
             image = Image.open(img_path)
             start_time = time.time()
@@ -103,13 +103,11 @@ if __name__ == "__main__":
             for i in range(len(filenames)):
                 if true_name == pre_name:
                     correct_count = correct_count + 1
-                    f.write(f"img_path: {img_path} pred_name: {filenames[0][1]}" + "\n")
-                # else:
-                #     f.write( f"img_path: {img_path} pred_name: {filenames[0][1]}"+"\n")
-    # with open(out_correct_rate_logs, 'w', encoding='utf-8') as correct_rate:
-    #     correct_rate.write(f"correct_count:{correct_count}, total_count: {total_count} ,accuracy: {correct_count/total_count}."+"\n")
-
-
+                    correct_file.write(f"img_path: {img_path} pred_name: {filenames[0][1]}" + "\n")
+                else:
+                    error_file.write( f"img_path: {img_path} pred_name: {filenames[0][1]}"+"\n")
+    with open(out_correct_rate_logs, 'w', encoding='utf-8') as correct_rate:
+        correct_rate.write(f"correct_count:{correct_count}, total_count: {total_count} ,accuracy: {correct_count/total_count}."+"\n")
 
 
 

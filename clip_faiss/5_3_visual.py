@@ -104,15 +104,20 @@ if __name__ == "__main__":
     base_path=os.getcwd()
     # faiss_path = os.path.join(base_path, "output", "faiss_model", "5037_image_path")
     faiss_path = os.path.join(base_path, "output", "faiss_model", "35_image_path")
+
     error_picture_name_logs = os.path.join(faiss_path,"error_picture_name.txt")
+    correct_picture_name_logs = os.path.join(faiss_path, "correct_picture_name.txt")
     out_error_picture_path=os.path.join(faiss_path,"error_picture")
+    out_correct_picture_path = os.path.join(faiss_path, "correct_picture")
     if not os.path.exists(out_error_picture_path):
         os.makedirs(out_error_picture_path)
+    if not os.path.exists(out_correct_picture_path):
+        os.makedirs(out_correct_picture_path)
     # 使用示例
-    line_array=read_and_parse_file(error_picture_name_logs)
+    line_array_error=read_and_parse_file(error_picture_name_logs)
 
     # 替换下面路径为你的图片路径
-    for i in line_array:
+    for i in line_array_error:
         image_path1=i[1]
         image_path2=i[3]
         merged_image = merge_two_images(image_path1, image_path2, 'horizontal')
@@ -123,5 +128,23 @@ if __name__ == "__main__":
         random_str=generate_random_string(5)
         # 保存图片
         merged_image.save(os.path.join(out_error_picture_path,f"{true_name}_{pre_name}_{random_str}.jpg"))
+        # merged_image.save("./sdjhkf.jpg")
+        # merged_image.show()  # 显示图
+
+    # 使用示例
+    line_array_correct=read_and_parse_file(correct_picture_name_logs)
+
+    # 替换下面路径为你的图片路径
+    for i in line_array_correct:
+        image_path1=i[1]
+        image_path2=i[3]
+        merged_image = merge_two_images(image_path1, image_path2, 'horizontal')
+
+        true_name = extract_directory_name(image_path1, -2)
+        pre_name = extract_directory_name(image_path2, -2)
+        # 生成一个随机的字符串
+        random_str=generate_random_string(5)
+        # 保存图片
+        merged_image.save(os.path.join(out_correct_picture_path,f"{true_name}_{pre_name}_{random_str}.jpg"))
         # merged_image.save("./sdjhkf.jpg")
         # merged_image.show()  # 显示图
