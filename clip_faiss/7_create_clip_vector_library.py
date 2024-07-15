@@ -42,14 +42,31 @@ def get_image_feature(filename: str):
         image_features = model.get_image_features(pixel_values=processed["pixel_values"])
     return image_features
 
+def get_image_clip_features(file_path):
+    '''
+        获取图像的clip特征
+    '''
+    image = Image.open(file_path)
+    inputs = processor(images=image, return_tensors="pt", padding=True)
+    image_features = model.get_image_features(inputs["pixel_values"])
+    image_features = image_features / image_features.norm(p=2, dim=-1, keepdim=True)  # normalize
+    image_features = image_features.detach().numpy()
+    # 关闭图像，释放资源
+    image.close()
+    return image_features
+
 
 if __name__ == '__main__':
     base_path = os.getcwd()
+    # 图片路径
+    image_path = os.path.join(base_path, 'data', 'clean_data_5037_correct_2')
+    # 向量长度
+    d = 512
+    # 输出文件名
+    out_name = 'clean_data_5037_correct_2'
+
     # clip_model的模型路径
     clip_model_path = os.path.join(base_path, "model", "clip_model")
-
-    # 5000数据清洗过且裁切10%的类用于生成图片特征的原始图像数据库，数据库文件组织路径为文件夹是类别名称，文件是图片
-    image_path = os.path.join(base_path, 'data', 'clean_data_5037_correct_2')
     id_type = 'image_path'
     '''
     生成图片faiss索引文件的路径
@@ -58,9 +75,9 @@ if __name__ == '__main__':
     '''
 
     if id_type == 'category_name':
-        out_path = os.path.join(base_path, 'output', 'faiss_model', 'clean_data_5037_correct_2')
+        out_path = os.path.join(base_path, 'output', 'faiss_model', out_name)
     elif id_type == 'image_path':
-        out_path = os.path.join(base_path, 'output', 'faiss_model', 'clean_data_5037_correct_2')
+        out_path = os.path.join(base_path, 'output', 'faiss_model', out_name)
 
 
     if not os.path.exists(out_path):
@@ -71,7 +88,6 @@ if __name__ == '__main__':
     model = CLIPModel.from_pretrained(clip_model_path)
     processor = CLIPProcessor.from_pretrained(clip_model_path)
 
-    d = 512
     index = faiss.IndexFlatL2(d)  # 使用 L2 距离
     # 遍历文件夹
     file_paths = []
@@ -93,15 +109,8 @@ if __name__ == '__main__':
 
     for file_path in tqdm(file_paths, total=len(file_paths)):
         # 使用PIL打开图片
-        image = Image.open(file_path)
-        inputs = processor(images=image, return_tensors="pt", padding=True)
-        image_features = model.get_image_features(inputs["pixel_values"])
-        image_features = image_features / image_features.norm(p=2, dim=-1, keepdim=True)  # normalize
-        image_features = image_features.detach().numpy()
-
+        image_features=get_image_clip_features(file_path)
         index.add(image_features)
-        # 关闭图像，释放资源
-        image.close()
 
     faiss.write_index(index, out_image_faiss)
 
