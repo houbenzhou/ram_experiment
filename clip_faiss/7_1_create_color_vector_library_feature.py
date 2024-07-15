@@ -58,6 +58,7 @@ def get_image_color_features(image_path, image_size=(16, 16)):
     image_features=[]
     image_features.append(np.concatenate((b_array, g_array, r_array)).astype('float32'))
     image_features=np.array(image_features)
+    image_features = image_features-0.5
     cv2.destroyAllWindows()
     return image_features
 
@@ -111,8 +112,13 @@ def extract_directory_name(path, level):
 # 示例：使用颜色直方图创建FAISS索引
 if __name__ == "__main__":
     base_path = os.getcwd()
-    # 5000数据清洗过且裁切10%的类用于生成图片特征的原始图像数据库，数据库文件组织路径为文件夹是类别名称，文件是图片
-    image_path = os.path.join(base_path, 'data', 'clean_data_5037')
+    # 图片路径
+    image_path = os.path.join(base_path, 'data', '新零售图片数据_Trax_部分')
+    # 向量长度
+    d = 768
+    # 输出文件名
+    out_name = '35_category_05'
+
     id_type = 'image_path'
 
     '''
@@ -122,9 +128,9 @@ if __name__ == "__main__":
     '''
 
     if id_type == 'category_name':
-        out_path = os.path.join(base_path, 'output', 'faiss_model', 'color_feature','clean_data_5037')
+        out_path = os.path.join(base_path, 'output', 'faiss_model', 'color_feature','35_category_05')
     elif id_type == 'image_path':
-        out_path = os.path.join(base_path, 'output', 'faiss_model', 'color_feature','clean_data_5037')
+        out_path = os.path.join(base_path, 'output', 'faiss_model', 'color_feature','35_category_05')
 
 
     if not os.path.exists(out_path):
@@ -132,7 +138,7 @@ if __name__ == "__main__":
     out_category_name = os.path.join(out_path, 'category_name.json')
     out_image_faiss=os.path.join(out_path, 'image_faiss.index')
 
-    d = 768
+
     index = faiss.IndexFlatL2(d)  # 使用 L2 距离
     # 遍历文件夹
     file_paths = []
@@ -154,7 +160,6 @@ if __name__ == "__main__":
 
     for file_path in tqdm(file_paths, total=len(file_paths)):
         # 使用PIL打开图片
-        # image = Image.open(file_path)
         image_features = get_image_color_features(file_path)
 
         index.add(image_features)
