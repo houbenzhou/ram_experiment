@@ -37,9 +37,9 @@ def extract_directory_name(path, level):
 
 def get_image_feature(filename: str):
     image = Image.open(filename).convert("RGB")
-    processed = processor(images=image, return_tensors="pt", padding=True, truncation=True)
+    processed = clip_processor(images=image, return_tensors="pt", padding=True, truncation=True)
     with torch.no_grad():
-        image_features = model.get_image_features(pixel_values=processed["pixel_values"])
+        image_features = clip_model.get_image_features(pixel_values=processed["pixel_values"])
     return image_features
 
 def get_image_clip_features(file_path):
@@ -47,8 +47,8 @@ def get_image_clip_features(file_path):
         获取图像的clip特征
     '''
     image = Image.open(file_path)
-    inputs = processor(images=image, return_tensors="pt", padding=True)
-    image_features = model.get_image_features(inputs["pixel_values"])
+    inputs = clip_processor(images=image, return_tensors="pt", padding=True)
+    image_features = clip_model.get_image_features(inputs["pixel_values"])
     image_features = image_features / image_features.norm(p=2, dim=-1, keepdim=True)  # normalize
     image_features = image_features.detach().numpy()
     # 关闭图像，释放资源
@@ -85,8 +85,8 @@ if __name__ == '__main__':
     out_category_name = os.path.join(out_path, 'category_name.json')
     out_image_faiss=os.path.join(out_path, 'image_faiss.index')
     # 加载clip模型文件
-    model = CLIPModel.from_pretrained(clip_model_path)
-    processor = CLIPProcessor.from_pretrained(clip_model_path)
+    clip_model = CLIPModel.from_pretrained(clip_model_path)
+    clip_processor = CLIPProcessor.from_pretrained(clip_model_path)
 
     index = faiss.IndexFlatL2(d)  # 使用 L2 距离
     # 遍历文件夹
