@@ -111,6 +111,10 @@ def get_image_clip_features(file_path):
     image_features = clip_model.get_image_features(inputs["pixel_values"])
     image_features = image_features / image_features.norm(p=2, dim=-1, keepdim=True)  # normalize
     image_features = image_features.detach().numpy()
+    # 均值方差归一化
+    mean = np.mean(image_features)
+    std = np.std(image_features)
+    image_features = (image_features - mean)/std
     # 关闭图像，释放资源
     image.close()
     return image_features
@@ -131,8 +135,8 @@ def image_search(img_path, k=1):
 if __name__ == "__main__":
     base_path = os.getcwd()
     clip_model_path = os.path.join(base_path, "model","clip_model")
-    faiss_path = os.path.join(base_path,"output","faiss_model","color_clip_feature","35_category")
-    img_path = os.path.join(base_path, "data", "新零售图片数据_Trax_部分")
+    faiss_path = os.path.join(base_path,"output","faiss_model","color_clip_feature","clean_data_5037")
+    img_path = os.path.join(base_path, "data", "clean_data_5037")
 
     # 加载clip模型
     clip_model = CLIPModel.from_pretrained(clip_model_path)
