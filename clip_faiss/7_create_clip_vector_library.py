@@ -14,6 +14,26 @@ from pathlib import Path
     image.faiss：从文件夹中获取图片特征向量
 
 """
+def extract_directory_name(path, level):
+    """
+    Extracts a directory name from a given path at the specified level.
+
+    :param path: The file path from which to extract the directory.
+    :param level: The level of the directory to extract, where 0 is the top-level.
+    :return: The name of the directory at the specified level or None if level is out of range.
+    """
+    try:
+        # 将字符串路径转换为Path对象
+        p = Path(path)
+        # 通过parts属性获取所有部分的元组，筛选出目录部分
+        # 忽略最后一部分如果它是文件名
+        directories=p.parts
+        # directories = [part for part in p.parts if Path(part).is_dir()]
+        # 返回指定层级的目录名
+        return directories[level]
+    except IndexError:
+        # 如果指定的层级不存在，返回None
+        return None
 
 def get_image_feature(filename: str):
     image = Image.open(filename).convert("RGB")
@@ -27,63 +47,6 @@ if __name__ == '__main__':
     base_path = os.getcwd()
     # clip_model的模型路径
     clip_model_path = os.path.join(base_path, "model", "clip_model")
-
-    # # 35类用于生成图片特征的原始图像数据库，数据库文件组织路径为文件夹是类别名称，文件是图片
-    # image_path = os.path.join(base_path, 'data', '新零售图片数据_Trax_部分')
-    # id_type = 'image_path'
-    # '''
-    # 生成图片faiss索引文件的路径
-    #     category_name:类别名称从文件夹路径中获取
-    #     image_path:类别名称是图片路径
-    # '''
-    #
-    # if id_type == 'category_name':
-    #     out_path = os.path.join(base_path, 'output', 'faiss_model', '35_category_name')
-    # elif id_type == 'image_path':
-    #     out_path=os.path.join(base_path, 'output','faiss_model','35_image_path')
-
-    # 5037类用于生成图片特征的原始图像数据库，数据库文件组织路径为文件夹是类别名称，文件是图片
-    # image_path = os.path.join(base_path, 'data', 'Trax_bbox出来的小图含label_20230207')
-    # id_type = 'category_name'
-    # # 生成图片faiss索引文件的路径
-    # # category_name:类别名称从文件夹路径中获取
-    # # image_path:类别名称是图片路径
-    # '''
-    #  生成图片faiss索引文件的路径
-    #      category_name:类别名称从文件夹路径中获取
-    #      image_path:类别名称是图片路径
-    # '''
-    # if id_type == 'category_name':
-    #     out_path = os.path.join(base_path, 'output', 'faiss_model', '5037_category_name')
-    # elif id_type == 'image_path':
-    #     out_path=os.path.join(base_path, 'output','faiss_model','5037_image_path')
-
-    # # 5000数据清洗过的类用于生成图片特征的原始图像数据库，数据库文件组织路径为文件夹是类别名称，文件是图片
-    # image_path = os.path.join(base_path, 'data', 'out_clean_data')
-    # id_type = 'image_path'
-    # '''
-    # 生成图片faiss索引文件的路径
-    #     category_name:类别名称从文件夹路径中获取
-    #     image_path:类别名称是图片路径
-    # '''
-    #
-    # if id_type == 'category_name':
-    #     out_path = os.path.join(base_path, 'output', 'faiss_model', 'out_clean_data_image_path')
-    # elif id_type == 'image_path':
-    #     out_path=os.path.join(base_path, 'output','faiss_model','out_clean_data_image_path')
-    # # 5000数据清洗过且裁切10%的类用于生成图片特征的原始图像数据库，数据库文件组织路径为文件夹是类别名称，文件是图片
-    # image_path = os.path.join(base_path, 'data', 'out_clean_data_cropped_images_10')
-    # id_type = 'image_path'
-    # '''
-    # 生成图片faiss索引文件的路径
-    #     category_name:类别名称从文件夹路径中获取
-    #     image_path:类别名称是图片路径
-    # '''
-    #
-    # if id_type == 'category_name':
-    #     out_path = os.path.join(base_path, 'output', 'faiss_model', 'out_clean_10_data_image_path')
-    # elif id_type == 'image_path':
-    #     out_path=os.path.join(base_path, 'output','faiss_model','out_clean_10_data_image_path')
 
     # 5000数据清洗过且裁切10%的类用于生成图片特征的原始图像数据库，数据库文件组织路径为文件夹是类别名称，文件是图片
     image_path = os.path.join(base_path, 'data', 'clean_data_5037_correct_2')
