@@ -7,6 +7,7 @@ import json
 import faiss
 from tqdm import tqdm
 from pathlib import Path
+import numpy as np
 
 """
     创建faiss数据库，文件夹下包含两个文件：
@@ -51,6 +52,15 @@ def get_image_clip_features(file_path):
     image_features = clip_model.get_image_features(inputs["pixel_values"])
     image_features = image_features / image_features.norm(p=2, dim=-1, keepdim=True)  # normalize
     image_features = image_features.detach().numpy()
+    # 最大最小值归一化
+    # min_image_features = np.min(image_features)
+    # max_image_features = np.max(image_features)
+    # image_features = (image_features - min_image_features)
+
+    # 均值方差归一化
+    mean = np.mean(image_features)
+    std = np.std(image_features)
+    image_features = (image_features - mean)/std
     # 关闭图像，释放资源
     image.close()
     return image_features
@@ -75,9 +85,9 @@ if __name__ == '__main__':
     '''
 
     if id_type == 'category_name':
-        out_path = os.path.join(base_path, 'output', 'faiss_model', out_name)
+        out_path = os.path.join(base_path, 'output', 'faiss_model', 'clip',out_name)
     elif id_type == 'image_path':
-        out_path = os.path.join(base_path, 'output', 'faiss_model', out_name)
+        out_path = os.path.join(base_path, 'output', 'faiss_model','clip', out_name)
 
 
     if not os.path.exists(out_path):
