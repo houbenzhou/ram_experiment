@@ -115,8 +115,8 @@ if __name__ == "__main__":
     out_category_name = os.path.join(out_path, 'category_name.json')
     out_image_faiss=os.path.join(out_path, 'image_faiss.index')
     # 加载dinov2模型
-    dinov2_processor= AutoImageProcessor.from_pretrained("facebook/dinov2-base")
-    dinov2_model = AutoModel.from_pretrained("facebook/dinov2-base")
+    dinov2_processor= AutoImageProcessor.from_pretrained(dinov2_model_path)
+    dinov2_model = AutoModel.from_pretrained(dinov2_model_path)
 
     index = faiss.IndexFlatL2(d)  # 使用 L2 距离
     # 遍历文件夹
