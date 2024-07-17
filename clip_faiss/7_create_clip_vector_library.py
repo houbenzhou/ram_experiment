@@ -99,6 +99,10 @@ if __name__ == '__main__':
     clip_processor = CLIPProcessor.from_pretrained(clip_model_path)
 
     index = faiss.IndexFlatL2(d)  # 使用 L2 距离
+    # faiss使用GPU
+    if faiss.get_num_gpus()>0:
+        res = faiss.StandardGpuResources()
+        index = faiss.index_cpu_to_gpu(res,0,index)
     # 遍历文件夹
     file_paths = []
     for root, dirs, files in os.walk(image_path):
