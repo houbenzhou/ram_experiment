@@ -36,6 +36,10 @@ def get_dinov2_features(image_path):
     image_features = image_features.mean(dim=1)
     image_features = image_features.detach().numpy()
     # image_features = outputs.last_hidden_state.detach().numpy()
+    # 均值方差归一化
+    mean = np.mean(image_features)
+    std = np.std(image_features)
+    image_features = (image_features - mean) / std
     return image_features
 
 def handle_img(img):
@@ -93,7 +97,7 @@ if __name__ == "__main__":
     # 向量长度
     d = 768
     # 输出文件名
-    out_name = 'clean_data_5037'
+    out_name = 'clean_data_5037_normalized'
 
     # dinov2_model的模型路径
     dinov2_model_path = os.path.join(base_path, "model", "dinov2_model")

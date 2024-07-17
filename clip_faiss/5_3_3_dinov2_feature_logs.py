@@ -9,7 +9,7 @@ from PIL import Image
 from transformers import CLIPProcessor, CLIPModel, AutoImageProcessor, AutoModel
 
 from clip_faiss.toolkit import view_bar
-
+import numpy as np
 
 def extract_directory_name(path, level):
     """
@@ -58,6 +58,10 @@ def image_search(image, k=1):
     image_features = outputs.last_hidden_state
     image_features = image_features.mean(dim=1)
     image_features = image_features.detach().numpy()
+    # 均值方差归一化
+    mean = np.mean(image_features)
+    std = np.std(image_features)
+    image_features = (image_features - mean) / std
     D, I = index.search(image_features, k)  # 实际的查询
 
     filenames = [[id2filename[str(j)] for j in i] for i in I]
@@ -68,7 +72,7 @@ def image_search(image, k=1):
 if __name__ == "__main__":
     base_path = os.getcwd()
     clip_model_path = os.path.join(base_path, "model","dinov2_model")
-    faiss_path = os.path.join(base_path,"output","faiss_model","dinov2_feature","clean_data_5037")
+    faiss_path = os.path.join(base_path,"output","faiss_model","dinov2_feature","clean_data_5037_normalized")
     img_path = os.path.join(base_path, "data", "clean_data_5037")
 
     # 加载dinov2模型
