@@ -8,6 +8,8 @@ import torch
 from PIL import Image
 from transformers import CLIPProcessor, CLIPModel, AutoImageProcessor, AutoModel
 
+from clip_faiss.toolkit import view_bar
+
 
 def extract_directory_name(path, level):
     """
@@ -44,14 +46,6 @@ def get_image_path(directory):
 
     # 从列表中随机选择一个图片路径
     return image_paths
-
-def get_image_feature(filename: str):
-    image = Image.open(filename).convert("RGB")
-    processed = clip_processor(images=image, return_tensors="pt", padding=True, truncation=True)
-    with torch.no_grad():
-        image_features = clip_model.get_image_features(pixel_values=processed["pixel_values"])
-    return image_features
-
 
 
 
@@ -102,6 +96,7 @@ if __name__ == "__main__":
             true_name = extract_directory_name(filenames[0][0],-2)
             pre_name = extract_directory_name(filenames[0][1],-2)
             total_count=total_count+1
+            view_bar(total_count,len(img_paths))
             for i in range(len(filenames)):
                 if true_name == pre_name:
                     correct_count = correct_count + 1

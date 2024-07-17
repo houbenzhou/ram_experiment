@@ -9,6 +9,9 @@ from PIL import Image
 from transformers import CLIPProcessor, CLIPModel
 import numpy as np
 
+from clip_faiss.toolkit import view_bar
+
+
 def extract_directory_name(path, level):
     """
     Extracts a directory name from a given path at the specified level.
@@ -91,6 +94,7 @@ def get_image_color_features(image_path, image_size=(16, 16)):
     image_features=[]
     image_features.append(np.concatenate((b_array, g_array, r_array)).astype('float32'))
     image_features=np.array(image_features)
+    # image_features = (image_features - 0.5) * 2.0
     image_features=image_features-0.5
     cv2.destroyAllWindows()
     return image_features
@@ -135,7 +139,7 @@ def image_search(img_path, k=1):
 if __name__ == "__main__":
     base_path = os.getcwd()
     clip_model_path = os.path.join(base_path, "model","clip_model")
-    faiss_path = os.path.join(base_path,"output","faiss_model","color_clip_feature","clean_data_5037")
+    faiss_path = os.path.join(base_path,"output","faiss_model","color_clip_feature","clean_data_5037_05")
     img_path = os.path.join(base_path, "data", "clean_data_5037")
 
     # 加载clip模型
@@ -162,6 +166,7 @@ if __name__ == "__main__":
             true_name = extract_directory_name(filenames[0][0],-2)
             pre_name = extract_directory_name(filenames[0][1],-2)
             total_count=total_count+1
+            view_bar(total_count, len(img_paths))
             for i in range(len(filenames)):
                 if true_name == pre_name:
                     correct_count = correct_count + 1

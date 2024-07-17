@@ -26,18 +26,20 @@
             ├─clean_data_5037：5037类数据，保存图片路径名称对应向量（用于可视化分析预测错误问题，预测结果分析保存此目录下）
             ├─clean_data_5037_correct_1：基于clean_data_5037，将所有预测正确的图像复制到新目录
             ├─clean_data_5037_correct_3：基于clean_data_5037_correct_2，copy所有文件夹数量大于3的文件夹到新目录
+            ├─color_feature：基于颜色特征的实验输出结果
     ├─1_clip_count_image_text_similarity：计算clip图像文本相似度
     ├─2_clip_text_to_image_multi_category：计算clip用文字查询图片多类区分度
     ├─3_clip_image_to_text：图片查询文字，传入图片利用文字解码器解读出文字
     ├─5_1_clip_and_faiss_New_Retail_Categories：利用clip将图像解码成向量，然后向量查询faiss索引，然后faiss索引查询faiss索引，然后faiss索引查询faiss索引，然后faiss索引查询faiss索引，然后faiss索引查询faiss索引，然后faiss索引查询faiss索引，然后faiss索引查询faiss索引，然后faiss索引查询faiss索引，然后faiss索引查询faiss索引，然后faiss索引查询faiss索引，然后faiss索引查询faiss索引，然后faiss索引查询faiss索引，然后
-    ├─5_3_visual_error：基于预测错误的日志，按照左边真值图、右边预测值图，拼接出来
-    ├─5_4_error_picture_name：输出预测错误的日志
-    ├─5_5_correct_picture_name：输出预测正确的日志
-    ├─5_6_visual_correct：基于预测正确的日志，按照左边真值图、右边预测值图，拼接出来
+    ├─5_3_logs.py：输出预测正确预测错误的日志，基于clip特征
+    ├─5_3_1_color_feature_logs.py：输出预测正确预测错误的日志，基于颜色特征
+    ├─5_4_visual.py：基于日志可视化预测正确以及预测错误的日志
+    ├─7_1_create_color_vector_library_feature.py：创建颜色特征向量库
     ├─7_create_vector_library：创建向量库
     ├─8_save_clip_model：保存clip模型
     ├─9_crop_images：裁掉边，剪切成小图
     ├─10_data_clean：清洗5000类的数据
     ├─11_0_copy_pic_from_mulit_pic：将图像类别文件夹中存在多张图像复制到新目录
+    ├─11_1_mv_error_pic：将预测错误的图像移动到新目录，这样源目录就变成预测正确的图像
     ├─11_copy_correct_pic：将正确预测的图像复制到新目录
     

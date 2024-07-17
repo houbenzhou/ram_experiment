@@ -130,9 +130,9 @@ def get_image_clip_features(file_path):
     # image_features = (image_features - min_image_features)
 
     # 均值方差归一化
-    # mean = np.mean(image_features)
-    # std = np.std(image_features)
-    # image_features = (image_features - mean)
+    mean = np.mean(image_features)
+    std = np.std(image_features)
+    image_features = (image_features - mean)/std
     # 关闭图像，释放资源
     image.close()
     return image_features
@@ -140,11 +140,11 @@ def get_image_clip_features(file_path):
 if __name__ == "__main__":
     base_path = os.getcwd()
     # 图片路径
-    image_path = os.path.join(base_path, 'data', '新零售图片数据_Trax_部分')
+    image_path = os.path.join(base_path, 'data', 'clean_data_5037')
     # 向量长度
     d = 1280
     # 输出文件名
-    out_name = '35_category'
+    out_name = 'clean_data_5037_05'
 
     # clip_model的模型路径
     clip_model_path = os.path.join(base_path, "model", "clip_model")

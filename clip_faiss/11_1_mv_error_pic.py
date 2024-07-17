@@ -149,7 +149,7 @@ def move_files(src, dest):
 if __name__ == "__main__":
     base_path = os.getcwd()
     clip_model_path = os.path.join(base_path, "model","clip_model")
-    faiss_path = os.path.join(base_path,"output","faiss_model","clean_data_5037")
+    faiss_path = os.path.join(base_path,"output","faiss_model","clean_data_5037_1")
     img_path = os.path.join(base_path, "data", "clean_data_5037_remove_error")
     out_img_path = os.path.join(base_path, "data", "clean_data_5037_error")
 

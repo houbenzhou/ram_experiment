@@ -16,6 +16,9 @@ import torch
 from torchvision import transforms
 from torch import nn
 
+from clip_faiss.toolkit import view_bar
+
+
 def extract_directory_name(path, level):
     """
     Extracts a directory name from a given path at the specified level.
@@ -90,8 +93,8 @@ def image_search(img_path, k=1):
 if __name__ == "__main__":
     base_path = os.getcwd()
     resnet50_model_path = os.path.join(base_path, "model", "resnet_model","resnet50-0676ba61.pth")
-    faiss_path = os.path.join(base_path,"output","faiss_model","resnet50_feature","35_category_05")
-    img_path = os.path.join(base_path, "data", "新零售图片数据_Trax_部分")
+    faiss_path = os.path.join(base_path,"output","faiss_model","resnet50_feature","clean_data_5037")
+    img_path = os.path.join(base_path, "data", "clean_data_5037")
 
     resnet_model = ResnetEmbeding(resnet50_model_path)
     # 加载faiss索引
@@ -115,6 +118,7 @@ if __name__ == "__main__":
             true_name = extract_directory_name(filenames[0][0],-2)
             pre_name = extract_directory_name(filenames[0][1],-2)
             total_count=total_count+1
+            view_bar(total_count, len(img_paths))
             for i in range(len(filenames)):
                 if true_name == pre_name:
                     correct_count = correct_count + 1

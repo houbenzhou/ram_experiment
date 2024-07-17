@@ -116,11 +116,11 @@ if __name__ == "__main__":
     base_path = os.getcwd()
     # 图片路径
     # image_path = os.path.join(base_path, 'data', 'clean_data_5037')
-    image_path = os.path.join(base_path, 'data', '新零售图片数据_Trax_部分')
+    image_path = os.path.join(base_path, 'data', 'clean_data_5037')
     # 向量长度
     d = 2048
     # 输出文件名
-    out_name = '35_category_05'
+    out_name = 'clean_data_5037'
 
     # resnet50_model的模型路径
     resnet50_model_path = os.path.join(base_path, "model", "resnet_model","resnet50-0676ba61.pth")
