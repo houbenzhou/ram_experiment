@@ -101,7 +101,7 @@ if __name__ == "__main__":
     out_name = 'clean_data_normalized111'
 
     # dinov2_model的模型路径
-    dinov2_model_path = os.path.join(base_path, "model", "dinov2_model1")
+    dinov2_model_path = os.path.join(base_path, "model", "dinov2_model")
     id_type = 'image_path'
 
     '''
