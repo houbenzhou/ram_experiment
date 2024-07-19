@@ -13,7 +13,7 @@ import json
 import faiss
 from tqdm import tqdm
 from pathlib import Path
-
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # 将图像缩放至同一尺寸
 # def resize(image_path, image_size=(256, 256)):
 #     img = Image.open(image_path)
@@ -30,10 +30,11 @@ def get_dinov2_features(image_path):
     :return:
     """
     image = Image.open(image_path)
-    inputs = dinov2_processor(images=image, return_tensors="pt")
+    inputs = dinov2_processor(images=image, return_tensors="pt").to(device)
+    # inputs.to(device)
     outputs = dinov2_model(**inputs)
     image_features = outputs.last_hidden_state
-    image_features = image_features.mean(dim=1)
+    image_features = image_features.mean(dim=1).to("cpu")
     image_features = image_features.detach().numpy()
     # image_features = outputs.last_hidden_state.detach().numpy()
     # 均值方差归一化
@@ -97,10 +98,10 @@ if __name__ == "__main__":
     # 向量长度
     d = 768
     # 输出文件名
-    out_name = 'clean_data_5037_normalized'
+    out_name = 'clean_data_normalized111'
 
     # dinov2_model的模型路径
-    dinov2_model_path = os.path.join(base_path, "model", "dinov2_model")
+    dinov2_model_path = os.path.join(base_path, "model", "dinov2_model1")
     id_type = 'image_path'
 
     '''
@@ -119,10 +120,13 @@ if __name__ == "__main__":
     out_category_name = os.path.join(out_path, 'category_name.json')
     out_image_faiss=os.path.join(out_path, 'image_faiss.index')
     # 加载dinov2模型
-    dinov2_processor= AutoImageProcessor.from_pretrained(dinov2_model_path)
-    dinov2_model = AutoModel.from_pretrained(dinov2_model_path)
+    dinov2_processor= AutoImageProcessor.from_pretrained(dinov2_model_path,local_files_only=True)
+    dinov2_model = AutoModel.from_pretrained(dinov2_model_path,local_files_only=True).to(device)
 
     index = faiss.IndexFlatL2(d)  # 使用 L2 距离
+    # if faiss.get_num_gpus() > 0:
+    #     res = faiss.StandardGpuResources()
+    #     index = faiss.index_cpu_to_gpu(res, 0, index)
     # 遍历文件夹
     file_paths = []
     for root, dirs, files in os.walk(image_path):
