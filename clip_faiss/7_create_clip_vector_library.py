@@ -15,6 +15,7 @@ import numpy as np
     image.faiss：从文件夹中获取图片特征向量
 
 """
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 def extract_directory_name(path, level):
     """
     Extracts a directory name from a given path at the specified level.
@@ -48,9 +49,10 @@ def get_image_clip_features(file_path):
         获取图像的clip特征
     '''
     image = Image.open(file_path)
-    inputs = clip_processor(images=image, return_tensors="pt", padding=True)
+    inputs = clip_processor(images=image, return_tensors="pt", padding=True).to(device)
     image_features = clip_model.get_image_features(inputs["pixel_values"])
-    image_features = image_features / image_features.norm(p=2, dim=-1, keepdim=True)  # normalize
+    image_features = image_features / image_features.norm(p=2, dim=-1, keepdim=True) # normalize
+    image_features = image_features.to("cpu")
     image_features = image_features.detach().numpy()
     # 最大最小值归一化
     # min_image_features = np.min(image_features)
@@ -95,7 +97,7 @@ if __name__ == '__main__':
     out_category_name = os.path.join(out_path, 'category_name.json')
     out_image_faiss=os.path.join(out_path, 'image_faiss.index')
     # 加载clip模型文件
-    clip_model = CLIPModel.from_pretrained(clip_model_path)
+    clip_model = CLIPModel.from_pretrained(clip_model_path).to(device)
     clip_processor = CLIPProcessor.from_pretrained(clip_model_path)
 
     index = faiss.IndexFlatL2(d)  # 使用 L2 距离
