@@ -73,13 +73,13 @@ if __name__ == "__main__":
     # out_path = os.path.join(base_path, "data", "新零售图片数据_Trax_部分_cropped_images_20")
     # crop_rate=0.2
 
-    img_path = os.path.join(base_path, "data", "out_clean_data")
+    img_path = os.path.join(base_path,"..", "data", "out_clean_data")
     img_paths = get_image_path(img_path)
     # # 输出5037类按照0.1的比例切除图像
     # out_path = os.path.join(base_path, "data", "out_clean_data_cropped_images_10")
     # crop_rate=0.1
     # # 输出5037类按照0.2的比例切除图像
-    out_path = os.path.join(base_path, "data", "out_clean_data_cropped_images_20")
+    out_path = os.path.join(base_path, "..","data", "out_clean_data_cropped_images_20")
     crop_rate=0.2
     # 如果out_path不存在则创建
     if not os.path.exists(out_path):

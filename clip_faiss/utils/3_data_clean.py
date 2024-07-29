@@ -51,13 +51,6 @@ def check_files_in_directory(directory_path):
     # os.listdir列出目录中的所有文件和文件夹
     files = os.listdir(directory_path)
 
-    # # 筛选出文件（排除文件夹）
-    # files = [file for file in files if os.path.isfile(os.path.join(directory_path, file))]
-    #
-    # if files:
-    #     return f"目录中有文件。具体文件数: {len(files)}"
-    # else:
-    #     return "目录中没有文件。"
     return files
 
 def copy_folder(src, dst):
@@ -98,20 +91,6 @@ if __name__ == "__main__":
         if i not in no_image_data_name:
             copy_folder(os.path.join(img_path,i),os.path.join(out_5000_clean_data,i))
 
-
-
-    # # 使用示例
-    # for i in img_paths_10:
-    #
-    #     category_name=extract_directory_name(i,-2)
-    #     category_names_10.append(category_name)
-    #
-    # for i in img_paths:
-    #     category_name = extract_directory_name(i, -2)
-    #     if category_name in category_names_10:
-    #         continue
-    #     else:
-    #         print(i)
 
 
 

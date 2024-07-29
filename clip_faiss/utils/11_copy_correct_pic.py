@@ -144,10 +144,10 @@ def image_search(image, k=1):
 
 if __name__ == "__main__":
     base_path = os.getcwd()
-    clip_model_path = os.path.join(base_path, "model","clip_model")
-    faiss_path = os.path.join(base_path,"output","faiss_model","35_image_path")
-    img_path = os.path.join(base_path, "data", "新零售图片数据_Trax_部分")
-    out_img_path = os.path.join(base_path, "data", "35_image_path_corrcet")
+    clip_model_path = os.path.join(base_path,"..", "model","clip_model")
+    faiss_path = os.path.join(base_path,"..","output","faiss_model","35_image_path")
+    img_path = os.path.join(base_path,"..", "data", "新零售图片数据_Trax_部分")
+    out_img_path = os.path.join(base_path,"..", "data", "35_image_path_corrcet")
 
 
     # 加载clip模型

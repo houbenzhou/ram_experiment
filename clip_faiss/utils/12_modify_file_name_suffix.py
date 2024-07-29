@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
     base_path = os.getcwd()
 
-    img_path = os.path.join(base_path, "data", "out_clean_data1")
+    img_path = os.path.join(base_path, "..","data", "clean_data_5037")
     img_paths = get_file_path(img_path)
 
     for i in img_paths:

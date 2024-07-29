@@ -46,7 +46,7 @@ def copy_folders_with_two_or_more_images(source_directory, target_directory,file
 ## 使用示例
 if __name__ == '__main__':
     base_path = os.getcwd()
-    source_directory = os.path.join(base_path, "data", "clean_data_5037_correct_2")
-    target_directory = os.path.join(base_path, "data", "clean_data_5037_correct_3")
+    source_directory = os.path.join(base_path,"..", "data", "clean_data_5037_correct_2")
+    target_directory = os.path.join(base_path, "..","data", "clean_data_5037_correct_3")
     copy_folders_with_two_or_more_images(source_directory, target_directory,file_num_threshold=3)
 

@@ -63,9 +63,9 @@ if __name__ == "__main__":
 
     base_path = os.getcwd()
     input_img_path = os.path.join(base_path, "..","data", "clean_data_5037")
-    output_path = os.path.join(base_path, "..","data", "clean_data_5037_resize")
+    output_path = os.path.join(base_path, "..","data", "clean_data_5037_resize","scale_02")
 
-    scale = 0.5  # 缩放比例，0.5意味着缩小到原始尺寸的一半
+    scale = 0.2  # 缩放比例，0.5意味着缩小到原始尺寸的一半
 
     img_paths=get_image_path(input_img_path)
 
