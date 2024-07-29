@@ -66,14 +66,14 @@ def get_image_clip_features(file_path):
 if __name__ == '__main__':
     base_path = os.getcwd()
     # 图片路径
-    image_path = os.path.join(base_path, 'data', '新零售图片数据_Trax_部分')
+    image_path = os.path.join(base_path, '..','data', '新零售图片数据_Trax_部分')
     # 向量长度
     d = 512
     # 输出文件名
     out_name = '35_image_path'
 
     # clip_model的模型路径
-    clip_model_path = os.path.join(base_path, "model", "clip_model")
+    clip_model_path = os.path.join(base_path,'..', "model", "clip_model")
     id_type = 'image_path'
     '''
     生成图片faiss索引文件的路径
