@@ -1,13 +1,13 @@
+import json
 import os
+from pathlib import Path
 
+import faiss
+import numpy as np
 import torch
 from PIL import Image
-from transformers import CLIPProcessor, CLIPModel, CLIPFeatureExtractor
-import json
-import faiss
 from tqdm import tqdm
-from pathlib import Path
-import numpy as np
+from transformers import CLIPProcessor, CLIPModel
 
 """
     创建faiss数据库，文件夹下包含两个文件：
@@ -71,11 +71,11 @@ def get_image_clip_features(file_path):
 if __name__ == '__main__':
     base_path = os.getcwd()
     # 图片路径
-    image_path = os.path.join(base_path, 'data', 'clean_data_5037_correct_2')
+    image_path = os.path.join(base_path, 'data', '新零售图片数据_Trax_部分')
     # 向量长度
     d = 512
     # 输出文件名
-    out_name = 'clean_data_5037_correct_2'
+    out_name = '新零售图片数据_Trax_部分'
 
     # clip_model的模型路径
     clip_model_path = os.path.join(base_path, "model", "clip_model")
@@ -102,9 +102,9 @@ if __name__ == '__main__':
 
     index = faiss.IndexFlatL2(d)  # 使用 L2 距离
     # faiss使用GPU
-    if faiss.get_num_gpus()>0:
-        res = faiss.StandardGpuResources()
-        index = faiss.index_cpu_to_gpu(res,0,index)
+    # if faiss.get_num_gpus()>0:
+    #     res = faiss.StandardGpuResources()
+    #     index = faiss.index_cpu_to_gpu(res,0,index)
     # 遍历文件夹
     file_paths = []
     for root, dirs, files in os.walk(image_path):
