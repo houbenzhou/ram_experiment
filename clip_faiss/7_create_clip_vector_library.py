@@ -54,11 +54,6 @@ def get_image_clip_features(file_path):
     image_features = image_features / image_features.norm(p=2, dim=-1, keepdim=True) # normalize
     image_features = image_features.to("cpu")
     image_features = image_features.detach().numpy()
-    # 最大最小值归一化
-    # min_image_features = np.min(image_features)
-    # max_image_features = np.max(image_features)
-    # image_features = (image_features - min_image_features)
-
     # 均值方差归一化
     mean = np.mean(image_features)
     std = np.std(image_features)
@@ -75,7 +70,7 @@ if __name__ == '__main__':
     # 向量长度
     d = 512
     # 输出文件名
-    out_name = '新零售图片数据_Trax_部分'
+    out_name = '35_image_path'
 
     # clip_model的模型路径
     clip_model_path = os.path.join(base_path, "model", "clip_model")
@@ -101,10 +96,6 @@ if __name__ == '__main__':
     clip_processor = CLIPProcessor.from_pretrained(clip_model_path)
 
     index = faiss.IndexFlatL2(d)  # 使用 L2 距离
-    # faiss使用GPU
-    # if faiss.get_num_gpus()>0:
-    #     res = faiss.StandardGpuResources()
-    #     index = faiss.index_cpu_to_gpu(res,0,index)
     # 遍历文件夹
     file_paths = []
     for root, dirs, files in os.walk(image_path):
